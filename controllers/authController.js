@@ -49,6 +49,21 @@ class AuthController {
       next(error);
     }
   }
+
+  // Register admin
+  async registerAdmin(req, res, next) {
+    try {
+      const result = await authService.registerAdmin(req.body);
+      
+      res.status(201).json({
+        success: true,
+        message: 'Admin registered successfully',
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

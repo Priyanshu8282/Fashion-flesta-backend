@@ -95,6 +95,37 @@ class AuthService {
       token
     };
   }
+
+  // Register admin
+  async registerAdmin(userData) {
+    const { name, email, password, phone, address } = userData;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
+
+    // Create new admin user
+    const user = new User({
+      name,
+      email,
+      password,
+      phone,
+      address,
+      role: 'admin' // Set role as admin
+    });
+
+    await user.save();
+
+    // Generate token
+    const token = generateToken(user._id, user.role);
+
+    return {
+      user: user.toJSON(),
+      token
+    };
+  }
 }
 
 module.exports = new AuthService();

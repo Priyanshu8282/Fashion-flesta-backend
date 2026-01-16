@@ -27,4 +27,12 @@ router.post(
   authController.loginAdmin
 );
 
+// Admin registration
+router.post(
+  '/admin/register',
+  validateRegistration,
+  checkValidationResult,
+  authController.registerAdmin
+);
+
 module.exports = router;
