@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const config = require('./config/env.config');
 
 
@@ -14,6 +15,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Request logger middleware (development only)
 if (config.nodeEnv === 'development') {
@@ -32,6 +36,21 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Import routes
+const publicRoutes = require('./routes/public');
+const privateRoutes = require('./routes/private');
+
+// Public routes (no authentication required)
+app.use('/api/auth', publicRoutes.authRoutes);
+app.use('/api/categories', publicRoutes.categoryRoutes);
+app.use('/api/products', publicRoutes.productRoutes);
+
+// Private routes (authentication required)
+app.use('/api/wishlist', privateRoutes.wishlistRoutes);
+app.use('/api/cart', privateRoutes.cartRoutes);
+app.use('/api/orders', privateRoutes.orderRoutes);
+app.use('/api/admin', privateRoutes.adminRoutes);
 
 
 
