@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Fashion Flesta E-commerce Backend API
 
 Complete backend API for Fashion Flesta e-commerce platform with authentication, customer features, and admin management.
@@ -433,3 +434,6 @@ Use Postman, Thunder Client, or any API testing tool to test endpoints.
 ---
 
 **Fashion Flesta Backend v1.0** - Built with ❤️ for e-commerce
+=======
+# E-commerce-backend
+>>>>>>> 7407bfb9b3469c4b085f867d2da6d0178b4c2ea4
