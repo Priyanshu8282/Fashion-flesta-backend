@@ -121,9 +121,14 @@ class AdminController {
         isActive: req.body.isActive !== undefined ? (req.body.isActive === 'true' || req.body.isActive === true) : true
       };
 
+      // Add cover image path if uploaded
+      if (req.files && req.files.coverImage && req.files.coverImage.length > 0) {
+        productData.coverImage = `/uploads/products/${req.files.coverImage[0].filename}`;
+      }
+
       // Add image paths if files were uploaded
-      if (req.files && req.files.length > 0) {
-        productData.images = req.files.map(file => `/uploads/products/${file.filename}`);
+      if (req.files && req.files.images && req.files.images.length > 0) {
+        productData.images = req.files.images.map(file => `/uploads/products/${file.filename}`);
       } else {
         productData.images = [];
       }
@@ -158,9 +163,14 @@ class AdminController {
         productData.sizes = Array.isArray(req.body.sizes) ? req.body.sizes : JSON.parse(req.body.sizes);
       }
 
+      // Add new cover image path if uploaded
+      if (req.files && req.files.coverImage && req.files.coverImage.length > 0) {
+        productData.coverImage = `/uploads/products/${req.files.coverImage[0].filename}`;
+      }
+
       // Add new image paths if files were uploaded
-      if (req.files && req.files.length > 0) {
-        productData.images = req.files.map(file => `/uploads/products/${file.filename}`);
+      if (req.files && req.files.images && req.files.images.length > 0) {
+        productData.images = req.files.images.map(file => `/uploads/products/${file.filename}`);
       }
 
       const product = await adminService.updateProduct(
@@ -276,6 +286,119 @@ class AdminController {
       res.status(200).json({
         success: true,
         data: customer
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ---BANNER MANAGEMENT---
+
+  // Get all banners (admin)
+  async getAllBanners(req, res, next) {
+    try {
+      const banners = await adminService.getAllBanners();
+      
+      res.status(200).json({
+        success: true,
+        count: banners.length,
+        data: banners
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Add banner
+  async addBanner(req, res, next) {
+    try {
+      // Validate required fields
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: 'Banner image is required'
+        });
+      }
+
+      const bannerData = {
+        title: req.body.title,
+        description: req.body.description,
+        image: `/uploads/banners/${req.file.filename}`,
+        link: req.body.link,
+        displayOrder: req.body.displayOrder || 0,
+        isActive: req.body.isActive !== undefined ? (req.body.isActive === 'true' || req.body.isActive === true) : true
+      };
+
+      const banner = await adminService.addBanner(bannerData);
+      
+      res.status(201).json({
+        success: true,
+        message: 'Banner created successfully',
+        data: banner
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Update banner
+  async updateBanner(req, res, next) {
+    try {
+      const bannerData = {
+        title: req.body.title,
+        description: req.body.description,
+        link: req.body.link,
+        displayOrder: req.body.displayOrder,
+        isActive: req.body.isActive === 'true' || req.body.isActive === true
+      };
+
+      // Add image path if file was uploaded
+      if (req.file) {
+        bannerData.image = `/uploads/banners/${req.file.filename}`;
+      }
+
+      const banner = await adminService.updateBanner(
+        req.params.id,
+        bannerData
+      );
+      
+      res.status(200).json({
+        success: true,
+        message: 'Banner updated successfully',
+        data: banner
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Delete banner
+  async deleteBanner(req, res, next) {
+    try {
+      await adminService.deleteBanner(req.params.id);
+      
+      res.status(200).json({
+        success: true,
+        message: 'Banner deleted successfully'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Toggle banner status
+  async toggleBannerStatus(req, res, next) {
+    try {
+      const { isActive } = req.body;
+      const banner = await adminService.toggleBannerStatus(
+        req.params.id,
+        isActive
+      );
+      
+      res.status(200).json({
+        success: true,
+        message: 'Banner status updated',
+        data: banner
       });
     } catch (error) {
       next(error);

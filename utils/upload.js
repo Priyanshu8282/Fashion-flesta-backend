@@ -6,8 +6,9 @@ const fs = require('fs');
 const uploadDir = path.join(__dirname, '../uploads');
 const categoriesDir = path.join(uploadDir, 'categories');
 const productsDir = path.join(uploadDir, 'products');
+const bannersDir = path.join(uploadDir, 'banners');
 
-[uploadDir, categoriesDir, productsDir].forEach(dir => {
+[uploadDir, categoriesDir, productsDir, bannersDir].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -59,9 +60,30 @@ const uploadProductImages = multer({
   storage: productStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit per file
   fileFilter: imageFilter
-}).array('images', 5); // Multiple files (max 5) with field name 'images'
+}).fields([
+  { name: 'coverImage', maxCount: 1 }, // Single cover image
+  { name: 'images', maxCount: 5 }      // Multiple product images (max 5)
+]);
+
+// Configure storage for banner images
+const bannerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, bannersDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'banner-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const uploadBannerImage = multer({
+  storage: bannerStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: imageFilter
+}).single('image'); // Single file with field name 'image'
 
 module.exports = {
   uploadCategoryImage,
-  uploadProductImages
+  uploadProductImages,
+  uploadBannerImage
 };

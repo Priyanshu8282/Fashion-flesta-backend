@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { adminController } = require('../../controllers');
 const { auth, adminAuth } = require('../../middlewares');
-const { validateCategory, validateProduct, checkValidationResult, uploadCategoryImage, uploadProductImages } = require('../../utils');
+const { validateCategory, validateProduct, checkValidationResult, uploadCategoryImage, uploadProductImages, uploadBannerImage } = require('../../utils');
 
 // All admin routes require authentication and admin role
 router.use(auth, adminAuth);
@@ -29,5 +29,12 @@ router.patch('/orders/:id/status', adminController.updateOrderStatus);
 // Customer management
 router.get('/customers', adminController.getAllCustomers);
 router.get('/customers/:id', adminController.getCustomerById);
+
+// Banner management
+router.get('/banners', adminController.getAllBanners);
+router.post('/banners', uploadBannerImage, adminController.addBanner);
+router.put('/banners/:id', uploadBannerImage, adminController.updateBanner);
+router.delete('/banners/:id', adminController.deleteBanner);
+router.patch('/banners/:id/status', adminController.toggleBannerStatus);
 
 module.exports = router;

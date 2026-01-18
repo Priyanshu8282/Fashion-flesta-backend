@@ -5,6 +5,7 @@ const wishlistService = require('./wishlistService');
 const cartService = require('./cartService');
 const orderService = require('./orderService');
 const adminService= require('./adminService');
+const bannerService = require('./bannerService');
 
 module.exports = {
   authService,
@@ -13,5 +14,6 @@ module.exports = {
   wishlistService,
   cartService,
   orderService,
-  adminService
+  adminService,
+  bannerService
 };

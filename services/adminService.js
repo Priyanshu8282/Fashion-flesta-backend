@@ -1,4 +1,4 @@
-const { Category, Product, Order, User } = require('../models');
+const { Category, Product, Order, User, Banner } = require('../models');
 
 class AdminService {
   // Dashboard statistics
@@ -181,6 +181,56 @@ class AdminService {
       ...customer.toJSON(),
       orderCount
     };
+  }
+
+  // Banner Management
+  async getAllBanners() {
+    const banners = await Banner.find().sort({ displayOrder: 1 });
+    return banners;
+  }
+
+  async addBanner(bannerData) {
+    const banner = new Banner(bannerData);
+    await banner.save();
+    return banner;
+  }
+
+  async updateBanner(bannerId, bannerData) {
+    const banner = await Banner.findByIdAndUpdate(
+      bannerId,
+      bannerData,
+      { new: true, runValidators: true }
+    );
+
+    if (!banner) {
+      throw new Error('Banner not found');
+    }
+
+    return banner;
+  }
+
+  async deleteBanner(bannerId) {
+    const banner = await Banner.findByIdAndDelete(bannerId);
+    
+    if (!banner) {
+      throw new Error('Banner not found');
+    }
+
+    return banner;
+  }
+
+  async toggleBannerStatus(bannerId, isActive) {
+    const banner = await Banner.findByIdAndUpdate(
+      bannerId,
+      { isActive },
+      { new: true }
+    );
+
+    if (!banner) {
+      throw new Error('Banner not found');
+    }
+
+    return banner;
   }
 }
 

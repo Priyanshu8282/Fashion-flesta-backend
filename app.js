@@ -45,6 +45,7 @@ const privateRoutes = require('./routes/private');
 app.use('/api/auth', publicRoutes.authRoutes);
 app.use('/api/categories', publicRoutes.categoryRoutes);
 app.use('/api/products', publicRoutes.productRoutes);
+app.use('/api/banners', publicRoutes.bannerRoutes);
 
 // Private routes (authentication required)
 app.use('/api/wishlist', privateRoutes.wishlistRoutes);

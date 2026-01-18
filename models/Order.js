@@ -19,7 +19,7 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
-    required: true,
+  
     unique: true
   },
   customer: {
@@ -68,7 +68,10 @@ const orderSchema = new mongoose.Schema({
 // Generate order number before saving
 orderSchema.pre('save', async function(next) {
   if (!this.orderNumber) {
-    this.orderNumber = 'FF' + Date.now() + Math.floor(Math.random() * 1000);
+    // Generate more random order number: FF + timestamp + random 6-digit alphanumeric
+    const timestamp = Date.now();
+    const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+    this.orderNumber = `FF${timestamp}${randomPart}`;
   }
   next();
 });

@@ -4,7 +4,7 @@ const cartService = require('./cartService');
 class OrderService {
   // Place a new order
   async placeOrder(userId, orderData) {
-    const { items, shippingAddress, paymentMethod, upiTransactionId } = orderData;
+    const { items, shippingAddress, paymentMethod, upiTransactionId, orderNumber, paymentStatus, orderStatus } = orderData;
 
     // Calculate total amount and validate stock
     let totalAmount = 0;
@@ -36,18 +36,24 @@ class OrderService {
       await product.save();
     }
 
-    // Create order
-    const order = new Order({
+    // Create order data object
+    const orderDoc = {
       customer: userId,
       items: orderItems,
       totalAmount,
       shippingAddress,
       paymentMethod,
       upiTransactionId: upiTransactionId || '',
-      paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Pending',
-      orderStatus: 'Pending'
-    });
+      paymentStatus: paymentStatus || (paymentMethod === 'COD' ? 'Pending' : 'Pending'),
+      orderStatus: orderStatus || 'Pending'
+    };
 
+    // Only include orderNumber if provided (allows pre-save hook to generate it)
+    if (orderNumber) {
+      orderDoc.orderNumber = orderNumber;
+    }
+
+    const order = new Order(orderDoc);
     await order.save();
 
     // Clear user's cart

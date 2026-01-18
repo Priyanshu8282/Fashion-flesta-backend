@@ -18,7 +18,16 @@ class WishlistController {
   // Add to wishlist
   async addToWishlist(req, res, next) {
     try {
-      const { productId } = req.body;
+      // Support both "productId" (singular) and "products" (array)
+      const productId = req.body.productId || (req.body.products && req.body.products[0]);
+      
+      if (!productId) {
+        return res.status(400).json({
+          success: false,
+          message: 'productId is required'
+        });
+      }
+      
       const wishlist = await wishlistService.addToWishlist(req.user._id, productId);
       
       res.status(200).json({

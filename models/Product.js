@@ -29,6 +29,10 @@ const productSchema = new mongoose.Schema({
   images: [{
     type: String
   }],
+  coverImage: {
+    type: String,
+    trim: true
+  },
   stock: {
     type: Number,
     required: [true, 'Stock quantity is required'],

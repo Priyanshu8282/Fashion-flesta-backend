@@ -18,7 +18,21 @@ class CartController {
   // Add to cart
   async addToCart(req, res, next) {
     try {
-      const { productId, quantity, size } = req.body;
+      // Support both direct parameters and items array format
+      let productId, quantity, size;
+      
+      if (req.body.items && Array.isArray(req.body.items) && req.body.items.length > 0) {
+        // Format: { items: [{ product, quantity, size }] }
+        const firstItem = req.body.items[0];
+        productId = firstItem.product;
+        quantity = firstItem.quantity;
+        size = firstItem.size;
+      } else {
+        // Format: { productId, quantity, size }
+        productId = req.body.productId;
+        quantity = req.body.quantity;
+        size = req.body.size;
+      }
       
       if (!productId || !quantity || !size) {
         return res.status(400).json({

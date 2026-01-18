@@ -8,7 +8,10 @@ class OrderController {
         items: req.body.items,
         shippingAddress: req.body.shippingAddress,
         paymentMethod: req.body.paymentMethod,
-        upiTransactionId: req.body.upiTransactionId
+        upiTransactionId: req.body.upiTransactionId,
+        orderNumber: req.body.orderNumber, // Optional: custom order number
+        paymentStatus: req.body.paymentStatus, // Optional: payment status
+        orderStatus: req.body.orderStatus // Optional: order status
       };
 
       const order = await orderService.placeOrder(req.user._id, orderData);
