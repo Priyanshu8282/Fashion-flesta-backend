@@ -4,6 +4,9 @@ const { connectDB, envConfig } = require('./config');
 // Connect to MongoDB
 connectDB();
 
+
+
+
 // Start server
 const PORT = envConfig.port;
 const server = app.listen(PORT, () => {
