@@ -52,6 +52,8 @@ app.use('/api/wishlist', privateRoutes.wishlistRoutes);
 app.use('/api/cart', privateRoutes.cartRoutes);
 app.use('/api/orders', privateRoutes.orderRoutes);
 app.use('/api/admin', privateRoutes.adminRoutes);
+app.use('/api/addresses', privateRoutes.addressRoutes);
+app.use('/api/user', privateRoutes.userRoutes);
 
 
 

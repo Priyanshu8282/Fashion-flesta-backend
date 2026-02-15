@@ -9,15 +9,19 @@ class ProductController {
         minPrice: req.query.minPrice,
         maxPrice: req.query.maxPrice,
         search: req.query.search,
-        isFeatured: req.query.isFeatured
+        isFeatured: req.query.isFeatured,
+        page: req.query.page || 1,
+        limit: req.query.limit || 10,
+        isAdmin: req.originalUrl.includes('/admin')
       };
 
-      const products = await productService.getAllProducts(filters);
+      const result = await productService.getAllProducts(filters);
       
       res.status(200).json({
         success: true,
-        count: products.length,
-        data: products
+        count: result.products.length,
+        pagination: result.pagination,
+        data: result.products
       });
     } catch (error) {
       next(error);
@@ -86,6 +90,66 @@ class ProductController {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit) : 10;
       const products = await productService.getFeaturedProducts(limit);
+      
+      res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get product by slug
+  async getProductBySlug(req, res, next) {
+    try {
+      const product = await productService.getProductBySlug(req.params.slug);
+      
+      res.status(200).json({
+        success: true,
+        data: product
+      });
+    } catch (error) {
+      error.statusCode = 404;
+      next(error);
+    }
+  }
+
+  // Get related products
+  async getRelatedProducts(req, res, next) {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit) : 4;
+      const product = await productService.getProductById(req.params.id);
+      const relatedProducts = await productService.getRelatedProducts(
+        req.params.id,
+        product.category._id,
+        limit
+      );
+      
+      res.status(200).json({
+        success: true,
+        count: relatedProducts.length,
+        data: relatedProducts
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Search products
+  async searchProducts(req, res, next) {
+    try {
+      const { q } = req.query;
+      
+      if (!q) {
+        return res.status(400).json({
+          success: false,
+          message: 'Search query is required'
+        });
+      }
+
+      const products = await productService.searchProducts(q.trim());
       
       res.status(200).json({
         success: true,

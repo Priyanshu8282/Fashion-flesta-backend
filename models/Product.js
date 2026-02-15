@@ -6,6 +6,12 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product name is required'],
     trim: true
   },
+  slug: {
+    type: String,
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
   description: {
     type: String,
     required: [true, 'Product description is required'],
@@ -51,9 +57,21 @@ const productSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Generate slug from name before saving
+productSchema.pre('save', function(next) {
+  if (this.isModified('name') || !this.slug) {
+    this.slug = this.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+  next();
+});
+
 // Indexes for better query performance
 productSchema.index({ category: 1, isActive: 1 });
 productSchema.index({ price: 1 });
 productSchema.index({ isFeatured: 1, isActive: 1 });
+productSchema.index({ slug: 1 });
 
 module.exports = mongoose.model('Product', productSchema);

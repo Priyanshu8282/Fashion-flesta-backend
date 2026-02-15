@@ -126,6 +126,36 @@ class AuthService {
       token
     };
   }
+
+  // Get user profile
+  async getProfile(userId) {
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.toJSON();
+  }
+
+  // Update user profile
+  async updateProfile(userId, updateData) {
+    const { name, phone } = updateData;
+
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Update allowed fields
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+
+    await user.save();
+
+    return user.toJSON();
+  }
 }
 
 module.exports = new AuthService();

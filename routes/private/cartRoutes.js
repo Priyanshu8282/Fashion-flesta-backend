@@ -18,4 +18,7 @@ router.put('/:productId', cartController.updateCartItem);
 // Remove from cart
 router.delete('/:productId', cartController.removeFromCart);
 
+// Clear cart (remove all items)
+router.delete('/', cartController.clearCart);
+
 module.exports = router;

@@ -4,7 +4,8 @@ class AdminController {
   // Dashboard statistics
   async getDashboard(req, res, next) {
     try {
-      const stats = await adminService.getDashboardStats();
+      const { startDate, endDate } = req.query;
+      const stats = await adminService.getDashboardStats(startDate, endDate);
       
       res.status(200).json({
         success: true,
@@ -228,14 +229,17 @@ class AdminController {
     try {
       const filters = {
         status: req.query.status,
-        limit: req.query.limit
+        search: req.query.search,
+        page: req.query.page || 1,
+        limit: req.query.limit || 10
       };
-      const orders = await adminService.getAllOrders(filters);
+      const result = await adminService.getAllOrders(filters);
       
       res.status(200).json({
         success: true,
-        count: orders.length,
-        data: orders
+        count: result.orders.length,
+        pagination: result.pagination,
+        data: result.orders
       });
     } catch (error) {
       next(error);
@@ -266,12 +270,19 @@ class AdminController {
   // Get all customers
   async getAllCustomers(req, res, next) {
     try {
-      const customers = await adminService.getAllCustomers();
+      const filters = {
+        search: req.query.search,
+        page: req.query.page || 1,
+        limit: req.query.limit || 10
+      };
+      
+      const result = await adminService.getAllCustomers(filters);
       
       res.status(200).json({
         success: true,
-        count: customers.length,
-        data: customers
+        count: result.customers.length,
+        pagination: result.pagination,
+        data: result.customers
       });
     } catch (error) {
       next(error);
@@ -297,12 +308,18 @@ class AdminController {
   // Get all banners (admin)
   async getAllBanners(req, res, next) {
     try {
-      const banners = await adminService.getAllBanners();
+      const filters = {
+        page: req.query.page || 1,
+        limit: req.query.limit || 10
+      };
+
+      const result = await adminService.getAllBanners(filters);
       
       res.status(200).json({
         success: true,
-        count: banners.length,
-        data: banners
+        count: result.banners.length,
+        pagination: result.pagination,
+        data: result.banners
       });
     } catch (error) {
       next(error);

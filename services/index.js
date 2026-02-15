@@ -6,6 +6,7 @@ const cartService = require('./cartService');
 const orderService = require('./orderService');
 const adminService= require('./adminService');
 const bannerService = require('./bannerService');
+const addressService = require('./addressService');
 
 module.exports = {
   authService,
@@ -15,5 +16,6 @@ module.exports = {
   cartService,
   orderService,
   adminService,
-  bannerService
+  bannerService,
+  addressService
 };
