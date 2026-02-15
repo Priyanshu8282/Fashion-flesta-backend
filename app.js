@@ -7,6 +7,15 @@ const config = require('./config/env.config');
 
 // Initialize express app
 const app = express();
+// Health check route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to Fashion Flesta API - Girls Wear E-commerce',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Middleware
 app.use(cors({
@@ -27,15 +36,7 @@ if (config.nodeEnv === 'development') {
   });
 }
 
-// Health check route
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Welcome to Fashion Flesta API - Girls Wear E-commerce',
-    version: '1.0.0',
-    timestamp: new Date().toISOString()
-  });
-});
+
 
 // Import routes
 const publicRoutes = require('./routes/public');
