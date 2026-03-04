@@ -19,8 +19,7 @@ app.get('/', (req, res) => {
 
 // Middleware
 app.use(cors({
-  origin: config.frontendUrl,
-  credentials: true
+  origin: "*",
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
